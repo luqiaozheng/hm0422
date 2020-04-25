@@ -1,0 +1,50 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>thy</title>
+
+    <link rel="stylesheet" href="../static/bootstrap-3.3.7/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+    <script src="../static/js/jquery-1.9.1.min.js"></script>
+    <script src="../static/bootstrap-3.3.7/bootstrap-3.3.7/dist/js/bootstrap.js"></script>
+    <script src="../static/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+
+<hr>
+<a th:href="@{/book/queryBookList}">书籍页面</a>
+<table class="table table-hover">
+    <thead>
+    <td align="center" colspan="22"><font th:size="5"><span th:text="${session.bookName}"></span>的借阅记录</font></td>
+    </thead>
+    <thead bgcolor="#6495ed">
+    <th>序号</th>
+    <th>书籍名称</th>
+    <th>时间</th>
+    <th>操作用户</th>
+    <th>操作方式</th>
+    </thead>
+    <tbody>
+    <tr th:each="l:${list}">
+        <td th:text="${lStat.index+1}"></td>
+        <td th:text="${session.bookName}"></td>
+        <td th:text="${#dates.format(l.borrowingTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:text="${l.userName}"></td>
+        <td th:text="${l.status}"></td>
+    </tr>
+    <tr>
+        <td align="center" colspan="15">
+            <a class="allpage"><b th:text="'当前第 '+${page.pageNum} + ' 页,'"></b></a>
+            <a class="allpage"><b th:text="'共 '+${page.pages} + ' 页'"></b></a>
+            &nbsp;&nbsp;<a th:href="@{/borrow/queryList(currentPage=1,bId=${bId})}">首页</a>&nbsp;&nbsp;
+            <a th:if="${page.hasPreviousPage} == true" th:href="@{/borrow/queryList(currentPage=${page.prePage},bId=${bId})}">上一页</a>
+            &nbsp;&nbsp;<a th:href="@{/borrow/queryList(currentPage=${page.nextPage},bId=${bId})}"
+                           th:if="${page.hasNextPage} == true">下一页</a>
+            &nbsp;&nbsp;<a th:href="@{/borrow/queryList(currentPage=${page.lastPage},bId=${bId})}">尾页</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+</body>
+</html>

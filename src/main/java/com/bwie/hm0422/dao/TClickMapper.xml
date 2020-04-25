@@ -1,0 +1,145 @@
+<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<mapper namespace="com.bwie.hm0422.dao.TClickMapper" >
+  <resultMap id="BaseResultMap" type="com.bwie.hm0422.model.TClick" >
+    <result column="B_ID" property="bId" jdbcType="VARCHAR" />
+    <result column="TRAFFIC" property="traffic" jdbcType="DECIMAL" />
+  </resultMap>
+  <sql id="Example_Where_Clause" >
+    <where >
+      <foreach collection="oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Update_By_Example_Where_Clause" >
+    <where >
+      <foreach collection="example.oredCriteria" item="criteria" separator="or" >
+        <if test="criteria.valid" >
+          <trim prefix="(" suffix=")" prefixOverrides="and" >
+            <foreach collection="criteria.criteria" item="criterion" >
+              <choose >
+                <when test="criterion.noValue" >
+                  and ${criterion.condition}
+                </when>
+                <when test="criterion.singleValue" >
+                  and ${criterion.condition} #{criterion.value}
+                </when>
+                <when test="criterion.betweenValue" >
+                  and ${criterion.condition} #{criterion.value} and #{criterion.secondValue}
+                </when>
+                <when test="criterion.listValue" >
+                  and ${criterion.condition}
+                  <foreach collection="criterion.value" item="listItem" open="(" close=")" separator="," >
+                    #{listItem}
+                  </foreach>
+                </when>
+              </choose>
+            </foreach>
+          </trim>
+        </if>
+      </foreach>
+    </where>
+  </sql>
+  <sql id="Base_Column_List" >
+    B_ID, TRAFFIC
+  </sql>
+  <select id="selectByExample" resultMap="BaseResultMap" parameterType="com.bwie.hm0422.model.TClickExample" >
+    select
+    <if test="distinct" >
+      distinct
+    </if>
+    <include refid="Base_Column_List" />
+    from T_CLICK
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+    <if test="orderByClause != null" >
+      order by ${orderByClause}
+    </if>
+  </select>
+  <delete id="deleteByExample" parameterType="com.bwie.hm0422.model.TClickExample" >
+    delete from T_CLICK
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </delete>
+  <insert id="insert" parameterType="com.bwie.hm0422.model.TClick" >
+    insert into T_CLICK (B_ID, TRAFFIC)
+    values (#{bId,jdbcType=VARCHAR}, #{traffic,jdbcType=DECIMAL})
+  </insert>
+  <insert id="insertSelective" parameterType="com.bwie.hm0422.model.TClick" >
+    insert into T_CLICK
+    <trim prefix="(" suffix=")" suffixOverrides="," >
+      <if test="bId != null" >
+        B_ID,
+      </if>
+      <if test="traffic != null" >
+        TRAFFIC,
+      </if>
+    </trim>
+    <trim prefix="values (" suffix=")" suffixOverrides="," >
+      <if test="bId != null" >
+        #{bId,jdbcType=VARCHAR},
+      </if>
+      <if test="traffic != null" >
+        #{traffic,jdbcType=DECIMAL},
+      </if>
+    </trim>
+  </insert>
+  <select id="countByExample" parameterType="com.bwie.hm0422.model.TClickExample" resultType="java.lang.Integer" >
+    select count(*) from T_CLICK
+    <if test="_parameter != null" >
+      <include refid="Example_Where_Clause" />
+    </if>
+  </select>
+  <update id="updateByExampleSelective" parameterType="map" >
+    update T_CLICK
+    <set >
+      <if test="record.bId != null" >
+        B_ID = #{record.bId,jdbcType=VARCHAR},
+      </if>
+      <if test="record.traffic != null" >
+        TRAFFIC = #{record.traffic,jdbcType=DECIMAL},
+      </if>
+    </set>
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByExample" parameterType="map" >
+    update T_CLICK
+    set B_ID = #{record.bId,jdbcType=VARCHAR},
+      TRAFFIC = #{record.traffic,jdbcType=DECIMAL}
+    <if test="_parameter != null" >
+      <include refid="Update_By_Example_Where_Clause" />
+    </if>
+  </update>
+  <update id="updateByBookId">
+    update T_CLICK
+    set
+      TRAFFIC = #{traffic} where B_ID = #{bId}
+  </update>
+</mapper>

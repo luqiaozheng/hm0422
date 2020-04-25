@@ -1,0 +1,55 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE generatorConfiguration
+        PUBLIC "-//mybatis.org//DTD MyBatis Generator Configuration 1.0//EN"
+        "http://mybatis.org/dtd/mybatis-generator-config_1_0.dtd">
+
+<generatorConfiguration>
+    <!--jdbc的驱动jar-->
+    <classPathEntry
+            location="D:\oracledb\ojdbc6.jar"/>
+    <context id="my" targetRuntime="MyBatis3">
+        <commentGenerator>
+            <property name="suppressDate" value="false"/>
+            <property name="suppressAllComments" value="true"/>
+        </commentGenerator>
+
+        <!--数据库的配置-->
+        <jdbcConnection driverClass="oracle.jdbc.driver.OracleDriver"
+                        connectionURL="jdbc:oracle:thin:@localhost:1521:orcl"
+                        userId="scott"
+                        password="scott">
+        <property name="useInformationSchema" value="true"/>
+        </jdbcConnection>
+
+        <!-- model 实体文件配置 -->
+        <javaModelGenerator targetPackage="com.bwie.hm0422.model"
+                            targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+            <property name="trimStrings" value="true"/>
+        </javaModelGenerator>
+
+        <!-- mapper.xml文件生成配置 -->
+        <sqlMapGenerator targetPackage="com.bwie.hm0422.dao"
+                         targetProject="src/main/java">
+            <property name="enableSubPackages" value="true"/>
+        </sqlMapGenerator>
+
+        <!-- mapper接口生成配置 -->
+        <javaClientGenerator targetPackage="com.bwie.hm0422.dao"
+                             targetProject="src/main/java" type="XMLMAPPER">
+            <property name="enableSubPackages" value="true"/>
+        </javaClientGenerator>
+
+        <!--<table tableName="CTAS_FEE_BASE" domainObjectName="FeeBase"
+               enableCountByExample="false" enableUpdateByExample="false"
+               enableDeleteByExample="false" enableSelectByExample="false"
+               selectByExampleQueryId="false">
+        </table>-->
+
+        <!--生成的表名-->
+
+        <table tableName="t_click"></table>
+
+
+    </context>
+</generatorConfiguration>

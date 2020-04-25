@@ -1,0 +1,231 @@
+<!DOCTYPE html>
+<html lang="zh-CN" xmlns="http://www.w3.org/1999/xhtml" xmlns:th="http://www.thymeleaf.org">
+<head>
+    <meta http-equiv="Content-Type" content="text/html; charset=UTF-8"/>
+    <title>thy</title>
+    <script src="../static/js/jquery-1.9.1.min.js"></script>
+    <link rel="stylesheet" href="../static/bootstrap-3.3.7/bootstrap-3.3.7/dist/css/bootstrap.min.css">
+    <script src="../static/bootstrap-3.3.7/bootstrap-3.3.7/dist/js/bootstrap.js"></script>
+    <script src="../static/My97DatePicker/WdatePicker.js"></script>
+
+</head>
+<script type="text/javascript">
+    //th:action="@{}"
+    function upDown(id) {
+
+        var url = "/book/click?id="+id ;
+        $(function () {
+            $.get(url,function (msg) {
+                if(msg == "yes"){
+                    alert("点赞成功！")
+                }else{
+                    alert("图片已经点赞，不能重复点击！")
+                }
+            })
+        })
+    }
+
+    function queryBorrwing(id) {
+        $(function () {
+            $("#queryBorrowingInfoList").html("");
+            var url ="/borrow/queryBorrowList?id="+id;
+            $.getJSON(url,function (list) {
+                if(list!=null){
+                    //数据的拼接
+                    var append = "" ;
+                    for(var i = 0;i<list.length ;i++){
+                        //时间处理
+
+                        append += " <tr>" +"<td>" +(i+1)+"</td>"+
+                            "<td>"+list[i].bookName+"</td>"+
+                            "<td>"+list[i].borrowingTime+"</td>"+
+                            "<td>"+list[i].userName+"</td>"+
+                            "<td>"+list[i].status+"</td>"+"</tr>" ;
+                    }
+                    $("#queryBorrowingInfoList").html(append);
+
+                }
+            })
+        })
+
+    }
+    function queryXq(id) {
+        $(function () {
+
+            $.getJSON("/book/xq?bId="+id,function (msg) {
+                if(null!=msg){
+                    $("#t").html("书籍"+msg.bookName+"详情")
+                    $("#d").html("目前点击量"+msg.traffic);
+                    $("#x").attr("src",msg.picUrl)
+                    var zt ="";
+                    if(msg.borrowingFlag==0){
+                        zt="改书在库"
+                    }else {
+                        zt="已被借出"
+                    }
+                    $("#z").html("借阅状态:"+zt)
+                    $("#bookIntroduce").html(msg.bookIntroduce)
+                }
+            })
+        })
+
+    }
+
+
+
+
+
+</script>
+<body>
+<center>
+<div class="modal fade bs-example-modal-lg" id="myModal" tabindex="-1" role="dialog" aria-labelledby="myModalLabel" aria-hidden="true">
+    <div class="modal-dialog  modal-lg" >
+        <div class="modal-content" style="width: 1200px;align-content: center" align="center">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <h4 class="modal-title" id="myModalLabel">
+                    借阅记录
+                </h4>
+            </div>
+            <div class="modal-body">
+                <div class="container">
+                    <div class="row clearfix">
+                        <div class="col-md-12 column">
+                            <table class="table">
+                                <thead>
+                                <tr>
+                                    <th>
+                                        编号
+                                    </th>
+                                    <th>
+                                        图书名称
+                                    </th>
+                                    <th>
+                                        借阅时间
+                                    </th>
+                                    <th>
+                                        借阅用户
+                                    </th>
+                                    <th>
+                                        操作方式
+                                    </th>
+                                </tr>
+                                </thead>
+                                <tbody id="queryBorrowingInfoList">
+
+                                </tbody>
+                            </table>
+                        </div>
+                    </div>
+                </div>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</center>
+
+<center>
+    <form th:action="@{/book/queryBookList}" method="post" autocomplete="off">
+        书籍借出时间区间:<input type="text" name="startTime" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})"> - <input type="text" name="endTime" class="Wdate" onclick="WdatePicker({dateFmt:'yyyy-MM-dd HH:mm:ss'})">
+        <br>书籍名称:<input type="text" name="bookName">
+        <button type="submit">查询</button>
+    </form>
+    <a th:href="@{/book/toAdd}">添加</a>&nbsp;&nbsp;&nbsp;&nbsp;&nbsp;
+    <a th:href="@{/user/removeSession}">注销</a>
+</center>
+<hr>
+<table class="table table-hover">
+    <thead>
+    <td align="center" colspan="22"><font th:size="5">书籍列表</font></td>
+    </thead>
+    <thead bgcolor="#6495ed">
+    <th>编号</th>
+    <th>书籍名称</th>
+    <th>作者</th>
+    <th>浏览量</th>
+    <th>租借的状态</th>
+    <th>书籍封面</th>
+    <th>最近借出时间</th>
+    <th>编辑</th>
+    <th>查看</th>
+    <th>点赞</th>
+    </thead>
+    <tbody>
+    <tr th:each="l:${list}">
+        <td th:text="${lStat.index+1}"></td>
+        <td><a th:onclick="queryXq([[${l.bId}]])" data-toggle="modal" data-target="#xqModal" th:text="${l.bookName}" title="点击查看详情"></a></td>
+        <td th:text="${l.bookAuthor}"></td>
+        <td th:text="${l.borrowingCount}"></td>
+        <td th:text="${l.borrowingFlag==0?'在库':'出库'}"></td>
+        <td ><img th:src="@{${l.picUrl}}" width="30px" height="30px"/></td>
+        <td th:if="${l.borrowingFlag!=0}" th:text="${#dates.format(l.borrowingTime,'yyyy-MM-dd HH:mm:ss')}"></td>
+        <td th:if="${l.borrowingFlag==0}" th:text="该书在库"></td>
+        <td>
+            <a th:if="${l.borrowingFlag==0}" th:href="@{/book/borrowOrReturn(bId=${l.bId},borrowingFlag=${l.borrowingFlag},borrowingCount=${l.borrowingCount})}">借出</a>
+            <a th:if="${l.borrowingFlag==1}" th:href="@{/book/borrowOrReturn(bId=${l.bId},borrowingFlag=${l.borrowingFlag},borrowingCount=${l.borrowingCount})}">归还</a>
+        </td>
+        <td>
+            <button class="btn btn-primary" th:onclick="queryBorrwing([[${l.bId}]])" data-toggle="modal" data-target="#myModal">借阅记录</button>
+
+<!--                <form th:action="@{/borrow/putName}" method="post">-->
+
+
+        </td>
+        <td>
+                <input type="image"  th:onclick="upDown([[${l.bId}]])" src="../static/img/666.png" height="30px" width="30px">
+        </td>
+    </tr>
+    <tr>
+        <td align="center" colspan="15">
+            <a class="allpage"><b th:text="'当前第 '+${page.pageNum} + ' 页,'"></b></a>
+            <a class="allpage"><b th:text="'共 '+${page.pages} + ' 页'"></b></a>
+            <a th:if="${page.hasPreviousPage} == true" th:href="@{/book/queryBookList(currentPage=${page.prePage})}">上一页</a>
+            &nbsp;&nbsp;<a th:href="@{/book/queryBookList(currentPage=${page.nextPage})}"
+                           th:if="${page.hasNextPage} == true">下一页</a>
+            &nbsp;&nbsp;<a th:href="@{/book/queryBookList(currentPage=${page.lastPage})}">尾页</a>
+        </td>
+    </tr>
+    </tbody>
+</table>
+
+
+<!-- 详情模态框（Modal） -->
+<div class="modal fade" id="xqModal" tabindex="-1" role="dialog" aria-labelledby="xqModalLabel" aria-hidden="true">
+    <div class="modal-dialog">
+        <div class="modal-content">
+            <div class="modal-header">
+                <button type="button" class="close" data-dismiss="modal" aria-hidden="true">
+                    &times;
+                </button>
+                <center>
+                    <h3 class="modal-title" id="xqModalLabel">
+                        <span id="t"></span>
+                        <img id="x" src=""/>
+                    </h3>
+                    <h5 align="right">
+                        <span id="z"></span>
+                    </h5>
+                    <h4 align="right">
+                        <span id="d"></span>
+                    </h4>
+                </center>
+            </div>
+            <div class="modal-body">
+                <h4>简介</h4>
+                <span id="bookIntroduce"/>
+            </div>
+            <div class="modal-footer">
+                <button type="button" class="btn btn-default" data-dismiss="modal">关闭
+                </button>
+            </div>
+        </div><!-- /.modal-content -->
+    </div><!-- /.modal -->
+</div>
+</body>
+</html>
