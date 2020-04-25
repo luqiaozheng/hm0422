@@ -108,6 +108,11 @@ public class UserController {
         return "login";
     }
 
+    /**
+     * 注销方法
+     * @param session
+     * @return
+     */
     @RequestMapping("/removeSession")
     public String removeSession(HttpSession session){
         //清除session

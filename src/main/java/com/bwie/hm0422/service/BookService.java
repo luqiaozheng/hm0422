@@ -30,8 +30,6 @@ public class BookService {
     TClickMapper tClickMapper;
 
     public List<BookVo> queryBookList(TBook tBook) {
-
-
         return tBookMapper.selectBookVoList(tBook);
     }
 

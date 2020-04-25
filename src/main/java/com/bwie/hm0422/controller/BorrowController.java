@@ -14,7 +14,6 @@ import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.ResponseBody;
 import org.springframework.web.servlet.ModelAndView;
 
-import javax.servlet.http.HttpServletRequest;
 import javax.servlet.http.HttpSession;
 import java.util.List;
 
@@ -35,6 +34,13 @@ public class BorrowController {
         session.setAttribute("bookName",tBook.getBookName());
         return queryList(tBook,1);
     }
+
+    /**
+     * 查询书籍信息,书籍表和点击率表两表联查
+     * @param tBook
+     * @param currentPage
+     * @return
+     */
     @RequestMapping("/queryList")
     public ModelAndView queryList(TBook tBook, @RequestParam(defaultValue = "1")Integer currentPage){
         ModelAndView modelAndView = new ModelAndView("bo_list");

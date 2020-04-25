@@ -35,10 +35,10 @@ public class BookController {
     BookService bookService;
     @Autowired
     RedisTemplate redisTemplate;
-
+    //配置上传的绝对路径
     @Value("${file.upload.path}")
     private String filePath ;
-
+    //配置上传的相对
     @Value("${file.upload.relative}")
     private String relativePath;
 
@@ -52,6 +52,7 @@ public class BookController {
     @RequestMapping("/queryBookList")
     public ModelAndView queryBookList(TBook tBook, @RequestParam(defaultValue = "1") int currentPage) {
         ModelAndView modelAndView = new ModelAndView("list");
+        //分页
         PageHelper.startPage(currentPage,2);
         List<BookVo> books = bookService.queryBookList(tBook);
         PageInfo<BookVo> page = new PageInfo<>(books);
@@ -68,6 +69,7 @@ public class BookController {
      */
     @RequestMapping("/borrowOrReturn")
     public String borrowOrReturn(TBook tBook, HttpSession session){
+        //获取用户
         TUser user = (TUser) session.getAttribute("user");
         bookService.borrowOrReturn(tBook,user);
         return "redirect:/book/queryBookList";
@@ -120,7 +122,7 @@ public class BookController {
     @RequestMapping("/click")
     @ResponseBody
     public String click(String id, HttpServletRequest request,Model model){
-
+        //获取用户
         TUser user = (TUser) request.getSession().getAttribute("user");
         if(user!=null){
             //判断当前用户是否点赞过
@@ -130,6 +132,7 @@ public class BookController {
                 redisTemplate.opsForValue().increment(user.getuId()+"click_"+id,1);
                 return "yes";
             }else {
+                //提示已点过赞
                 return "no";
             }
 
@@ -139,14 +142,21 @@ public class BookController {
 
     }
 
+    /**
+     * 查询详情
+     * @param bId
+     * @return
+     */
     @RequestMapping("/xq")
     @ResponseBody
     public BookVo queryById(String bId){
+        //redis缓存数加1
         redisTemplate.opsForValue().increment(bId,1);
-
+        //通过bId查询书籍信息
         TBook tBook = new TBook();
         tBook.setbId(bId);
         BookVo bookVo = bookService.queryBookList(tBook).get(0);
+        //将redis缓存中数据赋值给对象,去页面回显
         Integer num = (Integer) redisTemplate.opsForValue().get(bId);
         bookVo.setTraffic(new Short(String.valueOf(num)));
         return bookVo;
